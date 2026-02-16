@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropBillion Smart System - Animated Flow Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            width: 100%;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .container {
+                padding: 20px;
+            }
+            .btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 PropBillion Smart System</h1>
+        <p>AI-Powered Customer Follow-up Automation</p>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <button class="btn btn-primary" onclick="startAnimation()">▶️ Start Animation</button>
+            <button class="btn btn-secondary" onclick="stopAnimation()">⏸️ Pause</button>
+            <button class="btn btn-success" onclick="resetAnimation()">🔄 Reset</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #667eea;"></div>
+                <span>Trigger & API</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #f093fb;"></div>
+                <span>Data Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #4facfe;"></div>
+                <span>AI Analysis</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #43e97b;"></div>
+                <span>Output & CRM</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #feca57; border: 2px solid #ff9ff3;"></div>
+                <span>Active Node</span>
+            </div>
+        </div>
+
+        <svg viewBox="0 0 1200 1400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradients -->
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#43e97b;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:1" />
+                </linearGradient>
+
+                <!-- Arrow marker -->
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#666" />
+                </marker>
+
+                <!-- Glow filter -->
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
+                <!-- Shadow filter -->
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+                </filter>
+            </defs>
+
+            <!-- Connection Lines -->
+            <g class="connections" stroke="#ccc" stroke-width="3" fill="none" marker-end="url(#arrowhead)">
+                <path id="line1" d="M 600 80 L 600 140" class="connection-line"/>
+                <path id="line2" d="M 600 220 L 600 280" class="connection-line"/>
+                <path id="line3" d="M 600 360 L 600 420" class="connection-line"/>
+                <path id="line4" d="M 600 500 L 600 560" class="connection-line"/>
+                <path id="line5" d="M 600 640 L 600 700" class="connection-line"/>
+                <path id="line6" d="M 600 780 L 600 840" class="connection-line"/>
+                <path id="line7" d="M 600 920 L 600 980" class="connection-line"/>
+                <path id="line8" d="M 600 1060 L 600 1120" class="connection-line"/>
+                <path id="line9" d="M 600 1200 L 600 1260" class="connection-line"/>
+            </g>
+
+            <!-- Data Flow Particles -->
+            <g class="particles">
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="0s">
+                        <mpath href="#line1"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="1s">
+                        <mpath href="#line2"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="1s"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="2s">
+                        <mpath href="#line3"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="2s"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="3s">
+                        <mpath href="#line4"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="3s"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="4s">
+                        <mpath href="#line5"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="4s"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="5s">
+                        <mpath href="#line6"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="5s"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="6s">
+                        <mpath href="#line7"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="6s"/>
+                </circle>
+                <circle class="particle" r="8" fill="#feca57" opacity="0">
+                    <animateMotion dur="9s" repeatCount="indefinite" begin="7s">
+                        <mpath href="#line8"/>
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" dur="9s" repeatCount="indefinite" begin="7s"/>
+                </circle>
+            </g>
+
+            <!-- Node 1: Trigger -->
+            <g class="node" id="node1" data-step="1" data-title="Schedule Trigger" data-desc="Runs every 5 minutes automatically">
+                <rect x="500" y="20" width="200" height="60" rx="10" fill="url(#grad1)" filter="url(#shadow)"/>
+                <text x="600" y="45" text-anchor="middle" fill="white" font-size="14" font-weight="bold">⏰ TRIGGER</text>
+                <text x="600" y="62" text-anchor="middle" fill="white" font-size="11">Every 5 Minutes</text>
+            </g>
+
+            <!-- Node 2: Fetch Calls -->
+            <g class="node" id="node2" data-step="2" data-title="Runo API - Get Call Logs" data-desc="Fetches latest call recordings from today">
+                <rect x="480" y="140" width="240" height="80" rx="10" fill="url(#grad1)" filter="url(#shadow)"/>
+                <text x="600" y="170" text-anchor="middle" fill="white" font-size="14" font-weight="bold">📞 FETCH CALL LOGS</text>
+                <text x="600" y="188" text-anchor="middle" fill="white" font-size="11">Runo API</text>
+                <text x="600" y="205" text-anchor="middle" fill="white" font-size="10">GET /call/logs?date=today</text>
+            </g>
+
+            <!-- Node 3: Validate -->
+            <g class="node" id="node3" data-step="3" data-title="Validation Check" data-desc="Filters: recording exists, duration > 30s, has phone">
+                <rect x="480" y="280" width="240" height="80" rx="10" fill="url(#grad2)" filter="url(#shadow)"/>
+                <text x="600" y="310" text-anchor="middle" fill="white" font-size="14" font-weight="bold">✅ VALIDATE CALL</text>
+                <text x="600" y="328" text-anchor="middle" fill="white" font-size="11">Check Requirements</text>
+                <text x="600" y="345" text-anchor="middle" fill="white" font-size="10">Recording + Duration + Phone</text>
+            </g>
+
+            <!-- Node 4: Extract Data -->
+            <g class="node" id="node4" data-step="4" data-title="Extract Customer Data" data-desc="Name, phone, email, call ID, recording URL, duration">
+                <rect x="480" y="420" width="240" height="80" rx="10" fill="url(#grad2)" filter="url(#shadow)"/>
+                <text x="600" y="450" text-anchor="middle" fill="white" font-size="14" font-weight="bold">📋 EXTRACT DATA</text>
+                <text x="600" y="468" text-anchor="middle" fill="white" font-size="11">Customer Profile</text>
+                <text x="600" y="485" text-anchor="middle" fill="white" font-size="10">Name | Phone | Email | Call ID</text>
+            </g>
+
+            <!-- Node 5: Download Audio -->
+            <g class="node" id="node5" data-step="5" data-title="Download Audio" data-desc="Downloads MP3/WAV recording file">
+                <rect x="480" y="560" width="240" height="80" rx="10" fill="url(#grad2)" filter="url(#shadow)"/>
+                <text x="600" y="590" text-anchor="middle" fill="white" font-size="14" font-weight="bold">⬇️ DOWNLOAD AUDIO</text>
+                <text x="600" y="608" text-anchor="middle" fill="white" font-size="11">Recording File</text>
+                <text x="600" y="625" text-anchor="middle" fill="white" font-size="10">HTTP GET recording_url</text>
+            </g>
+
+            <!-- Node 6: AI Transcribe -->
+            <g class="node" id="node6" data-step="6" data-title="Gemini AI Transcription" data-desc="Converts audio to text using Google Gemini 1.5 Flash">
+                <rect x="460" y="700" width="280" height="80" rx="10" fill="url(#grad3)" filter="url(#shadow)"/>
+                <text x="600" y="730" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🤖 AI TRANSCRIBE</text>
+                <text x="600" y="748" text-anchor="middle" fill="white" font-size="11">Google Gemini 1.5 Flash</text>
+                <text x="600" y="765" text-anchor="middle" fill="white" font-size="10">Audio → Full Transcript</text>
+            </g>
+
+            <!-- Node 7: AI Analyze -->
+            <g class="node" id="node7" data-step="7" data-title="AI FAQ Analysis" data-desc="Categorizes into 15 FAQ types, identifies intent, property type, location">
+                <rect x="460" y="840" width="280" height="80" rx="10" fill="url(#grad3)" filter="url(#shadow)"/>
+                <text x="600" y="870" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🧠 AI ANALYZE</text>
+                <text x="600" y="888" text-anchor="middle" fill="white" font-size="11">15 FAQ Categories + Intent</text>
+                <text x="600" y="905" text-anchor="middle" fill="white" font-size="10">Property Type | Location | Urgency</text>
+            </g>
+
+            <!-- Node 8: Smart Selector -->
+            <g class="node" id="node8" data-step="8" data-title="Smart Video Selector" data-desc="Selects best video based on property type → location → FAQ category">
+                <rect x="460" y="980" width="280" height="80" rx="10" fill="url(#grad3)" filter="url(#shadow)"/>
+                <text x="600" y="1010" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🎬 SELECT VIDEO</text>
+                <text x="600" y="1028" text-anchor="middle" fill="white" font-size="11">Personalized Content</text>
+                <text x="600" y="1045" text-anchor="middle" fill="white" font-size="10">25+ Video Library</text>
+            </g>
+
+            <!-- Node 9: WhatsApp -->
+            <g class="node" id="node9" data-step="9" data-title="Send WhatsApp Message" data-desc="Sends video + personalized text via WhatsApp Business API">
+                <rect x="460" y="1120" width="280" height="80" rx="10" fill="url(#grad4)" filter="url(#shadow)"/>
+                <text x="600" y="1150" text-anchor="middle" fill="white" font-size="14" font-weight="bold">💬 SEND WHATSAPP</text>
+                <text x="600" y="1168" text-anchor="middle" fill="white" font-size="11">Video + Personalized Text</text>
+                <text x="600" y="1185" text-anchor="middle" fill="white" font-size="10">WhatsApp Business API</text>
+            </g>
+
+            <!-- Node 10: Update CRM -->
+            <g class="node" id="node10" data-step="10" data-title="Update Runo CRM" data-desc="Updates CRM with 12 intelligent fields including priority score">
+                <rect x="460" y="1260" width="280" height="80" rx="10" fill="url(#grad4)" filter="url(#shadow)"/>
+                <text x="600" y="1290" text-anchor="middle" fill="white" font-size="14" font-weight="bold">💾 UPDATE CRM</text>
+                <text x="600" y="1308" text-anchor="middle" fill="white" font-size="11">12 Intelligence Fields</text>
+                <text x="600" y="1325" text-anchor="middle" fill="white" font-size="10">Priority Score + Full Analysis</text>
+            </g>
+
+            <!-- Time Labels -->
+            <g class="time-labels" fill="#999" font-size="11">
+                <text x="750" y="55" class="time-label">0s</text>
+                <text x="750" y="185" class="time-label">2s</text>
+                <text x="750" y="325" class="time-label">3s</text>
+                <text x="750" y="465" class="time-label">4s</text>
+                <text x="750" y="605" class="time-label">7s</text>
+                <text x="750" y="745" class="time-label">15s</text>
+                <text x="750" y="885" class="time-label">23s</text>
+                <text x="750" y="1025" class="time-label">25s</text>
+                <text x="750" y="1165" class="time-label">40s</text>
+                <text x="750" y="1305" class="time-label">45s</text>
+            </g>
+
+            <!-- Status Icons -->
+            <g class="status-icons" opacity="0">
+                <circle id="status1" cx="720" cy="50" r="12" fill="#43e97b"/>
+                <text x="720" y="55" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status2" cx="720" cy="180" r="12" fill="#43e97b"/>
+                <text x="720" y="185" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status3" cx="720" cy="320" r="12" fill="#43e97b"/>
+                <text x="720" y="325" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status4" cx="720" cy="460" r="12" fill="#43e97b"/>
+                <text x="720" y="465" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status5" cx="720" cy="600" r="12" fill="#43e97b"/>
+                <text x="720" y="605" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status6" cx="740" cy="740" r="12" fill="#43e97b"/>
+                <text x="740" y="745" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status7" cx="740" cy="880" r="12" fill="#43e97b"/>
+                <text x="740" y="885" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status8" cx="740" cy="1020" r="12" fill="#43e97b"/>
+                <text x="740" y="1025" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status9" cx="740" cy="1160" r="12" fill="#43e97b"/>
+                <text x="740" y="1165" text-anchor="middle" fill="white" font-size="16">✓</text>
+                
+                <circle id="status10" cx="740" cy="1300" r="12" fill="#43e97b"/>
+                <text x="740" y="1305" text-anchor="middle" fill="white" font-size="16">✓</text>
+            </g>
+        </svg>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="statTime">45s</div>
+                <div class="stat-label">Processing Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statSteps">10</div>
+                <div class="stat-label">Total Steps</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statSuccess">95%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statCalls">100+</div>
+                <div class="stat-label">Calls/Day</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        let animationStep = 0;
+        let animationInterval = null;
+        let isPaused = false;
+
+        const nodes = document.querySelectorAll('.node');
+        const statusIcons = document.querySelectorAll('.status-icons > *');
+        const tooltip = document.getElementById('tooltip');
+
+        // Add hover effects to nodes
+        nodes.forEach(node => {
+            node.addEventListener('mouseenter', function(e) {
+                const title = this.dataset.title;
+                const desc = this.dataset.desc;
+                tooltip.innerHTML = `<strong>${title}</strong><br>${desc}`;
+                tooltip.classList.add('show');
+            });
+
+            node.addEventListener('mousemove', function(e) {
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+            });
+
+            node.addEventListener('mouseleave', function() {
+                tooltip.classList.remove('show');
+            });
+
+            node.style.cursor = 'pointer';
+        });
+
+        function startAnimation() {
+            if (animationInterval) return; // Already running
+            
+            isPaused = false;
+            animateNextStep();
+            
+            animationInterval = setInterval(() => {
+                if (!isPaused) {
+                    animateNextStep();
+                }
+            }, 2000);
+        }
+
+        function stopAnimation() {
+            isPaused = true;
+        }
+
+        function resetAnimation() {
+            clearInterval(animationInterval);
+            animationInterval = null;
+            animationStep = 0;
+            isPaused = false;
+            
+            // Reset all nodes
+            nodes.forEach(node => {
+                node.style.opacity = '1';
+                node.style.transform = 'scale(1)';
+                const rect = node.querySelector('rect');
+                rect.style.filter = 'url(#shadow)';
+            });
+            
+            // Hide status icons
+            statusIcons.forEach(icon => {
+                icon.style.opacity = '0';
+            });
+        }
+
+        function animateNextStep() {
+            if (animationStep >= nodes.length) {
+                // Animation complete, restart
+                setTimeout(() => {
+                    resetAnimation();
+                    if (!isPaused) {
+                        startAnimation();
+                    }
+                }, 2000);
+                return;
+            }
+
+            // Highlight current node
+            const currentNode = nodes[animationStep];
+            const rect = currentNode.querySelector('rect');
+            
+            // Pulse effect
+            currentNode.style.transition = 'all 0.5s ease';
+            currentNode.style.transform = 'scale(1.1)';
+            rect.style.filter = 'url(#glow)';
+            
+            // Show status icon
+            if (animationStep > 0) {
+                statusIcons[animationStep - 1].style.opacity = '1';
+                statusIcons[animationStep - 1].style.transition = 'opacity 0.5s ease';
+            }
+
+            // Reset previous node
+            if (animationStep > 0) {
+                const prevNode = nodes[animationStep - 1];
+                prevNode.style.transform = 'scale(1)';
+                const prevRect = prevNode.querySelector('rect');
+                prevRect.style.filter = 'url(#shadow)';
+            }
+
+            // Update stats
+            const times = [0, 2, 3, 4, 7, 15, 23, 25, 40, 45];
+            document.getElementById('statTime').textContent = times[animationStep] + 's';
+            document.getElementById('statSteps').textContent = (animationStep + 1) + '/10';
+
+            animationStep++;
+        }
+
+        // Auto-start animation on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                startAnimation();
+            }, 1000);
+        });
+
+        // Connection line animation
+        const connectionLines = document.querySelectorAll('.connection-line');
+        connectionLines.forEach((line, index) => {
+            const length = line.getTotalLength();
+            line.style.strokeDasharray = length;
+            line.style.strokeDashoffset = length;
+            line.style.animation = `drawLine 1s ease-in-out ${index * 0.5}s forwards infinite`;
+        });
+
+        // Add CSS animation for drawing lines
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes drawLine {
+                from {
+                    stroke-dashoffset: var(--length);
+                }
+                to {
+                    stroke-dashoffset: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Set line lengths
+        connectionLines.forEach(line => {
+            const length = line.getTotalLength();
+            line.style.setProperty('--length', length);
+        });
+    </script>
+</body>
+</html>
